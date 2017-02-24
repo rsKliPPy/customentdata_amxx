@@ -15,7 +15,7 @@
 *   to add multiple entries.
 */
 #define MODULE_NAME "Custom Entity Data"
-#define MODULE_VERSION "1.0.1"
+#define MODULE_VERSION "1.0.2"
 #define MODULE_AUTHOR "KliPPy"
 #define MODULE_URL "http://"
 #define MODULE_LOGTAG "CED"
@@ -66,12 +66,12 @@
 #define FN_AMXX_ATTACH OnAmxxAttach
 
 /** AMXX Detach (unload) */
-#define FN_AMXX_DETACH OnAmxxDetach
+//#define FN_AMXX_DETACH OnAmxxDetach
 
 /** All plugins loaded
 * Do forward functions init here (MF_RegisterForward)
 */
-//#define FN_AMXX_PLUGINSLOADED OnPluginsLoaded
+#define FN_AMXX_PLUGINSLOADED OnPluginsLoaded
 
 /** All plugins are about to be unloaded */
 //#define FN_AMXX_PLUGINSUNLOADING OnPluginsUnloading
@@ -497,7 +497,7 @@
 // #define FN_GameShutdown						GameShutdown
 // #define FN_ShouldCollide						ShouldCollide
 
-// #define FN_OnFreeEntPrivateData_Post			OnFreeEntPrivateData_Post
+#define FN_OnFreeEntPrivateData_Post			OnFreeEntPrivateData_Post
 // #define FN_GameShutdown_Post					GameShutdown_Post
 // #define FN_ShouldCollide_Post				ShouldCollide_Post
 

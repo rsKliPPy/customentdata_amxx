@@ -10,8 +10,4 @@
 extern AMX_NATIVE_INFO g_natives[];
 extern StringHashMap<ke::AutoPtr<IEntDataEntry>> *g_entityData;
 
-bool CreateHooks();
-void RestoreHooks();
-
-
 #endif // MODULE_H

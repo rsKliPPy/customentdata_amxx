@@ -156,7 +156,6 @@ if builder.target_platform == 'linux':
 binary = cxx.Library(name)
 binary.sources += [
   'source/amxx_api.cpp',
-  'source/module.cpp',
   'source/natives.cpp',
 
   'public/amxxsdk/amxxmodule.cpp'

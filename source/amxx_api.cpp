@@ -4,14 +4,12 @@ StringHashMap<ke::AutoPtr<IEntDataEntry>> *g_entityData = nullptr;
 
 void OnAmxxAttach()
 {
-    g_entityData = new StringHashMap<ke::AutoPtr<IEntDataEntry>>[gpGlobals->maxEntities];
-
-    CreateHooks() && MF_AddNatives(g_natives);
+    MF_AddNatives(g_natives);
 }
 
-void OnAmxxDetach()
+void OnPluginsLoaded()
 {
-    RestoreHooks();
+    g_entityData = new StringHashMap<ke::AutoPtr<IEntDataEntry>>[gpGlobals->maxEntities];
 }
 
 void OnPluginsUnloaded()
@@ -22,4 +20,11 @@ void OnPluginsUnloaded()
     }
 
     delete g_entityData;
+}
+
+void OnFreeEntPrivateData_Post(edict_t *ed)
+{
+    // TODO: Let plugins somehow release handles bound to this entity
+
+    g_entityData[g_engfuncs.pfnIndexOfEdict(ed)].clear();
 }
