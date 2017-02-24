@@ -159,7 +159,7 @@ binary.sources += [
   'source/module.cpp',
   'source/natives.cpp',
 
-  'source/amxxsdk/amxxmodule.cpp'
+  'public/amxxsdk/amxxmodule.cpp'
 ]
 
 
