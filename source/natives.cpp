@@ -40,7 +40,7 @@ static cell Native_SetString(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    g_entityData[index].replace(key, ke::AutoPtr<IEntDataEntry>(new EntDataString(MF_GetAmxString(amx, params[3], 1, &dummyLen))));
+    g_entityData[index].replace(key, ke::AutoPtr<IEntDataEntry>(new EntDataString(MF_GetAmxString(amx, params[3], 2, &dummyLen))));
 
     return 0;
 }

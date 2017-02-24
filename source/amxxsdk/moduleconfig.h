@@ -15,7 +15,7 @@
 *   to add multiple entries.
 */
 #define MODULE_NAME "Custom Entity Data"
-#define MODULE_VERSION "1.0.0"
+#define MODULE_VERSION "1.0.1"
 #define MODULE_AUTHOR "KliPPy"
 #define MODULE_URL "http://"
 #define MODULE_LOGTAG "CED"
