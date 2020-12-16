@@ -72,11 +72,12 @@ if cxx.like('gcc'):
     '-Wno-unused-value',
     '-fno-strict-aliasing',
     '-fPIC',
-    '-m32'
+    '-m32',
+    '-fpermissive'
   ]
 
   cxx.cxxflags += [
-    '-std=c++11',
+    '-std=gnu++14',
     '-fno-exceptions',
     '-fno-rtti'
   ]

@@ -1,25 +1,36 @@
-// Configuration
+// vim: set ts=4 sw=4 tw=99 noet:
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Module Config
+//
 
 #ifndef __MODULECONFIG_H__
 #define __MODULECONFIG_H__
 
 /** Module info
-* -The logtag is the tag that the module's log messages will be
-*   prepended with.
-* -The library is the name that the #pragma library
-*   message will have prepended.
-* -The library class is the class of libraries that
-*   a module belongs to (like DBI).  Keep it "" to
-*   ignore.
-* -For both library and library class, you can use a comma
-*   to add multiple entries.
-*/
-#define MODULE_NAME "Custom Entity Data"
-#define MODULE_VERSION "1.0.2"
-#define MODULE_AUTHOR "KliPPy"
-#define MODULE_URL "http://"
-#define MODULE_LOGTAG "CED"
-#define MODULE_LIBRARY "customentdata"
+ * -The logtag is the tag that the module's log messages will be
+ *   prepended with.
+ * -The library is the name that the #pragma library
+ *   message will have prepended.
+ * -The library class is the class of libraries that 
+ *   a module belongs to (like DBI).  Keep it "" to 
+ *   ignore.
+ * -For both library and library class, you can use a comma
+ *   to add multiple entries.
+ */
+#define MODULE_NAME 	"Custom Entity Data"
+#define MODULE_VERSION 	"1.0.3"
+#define MODULE_AUTHOR 	"KliPPy"
+#define MODULE_URL 	"https://github.com/rsKliPPy/customentdata_amxx"
+#define MODULE_LOGTAG 	"CED"
+#define MODULE_LIBRARY 	"customentdata"
 #define MODULE_LIBCLASS ""
 // If you want the module not to be reloaded on mapchange, remove / comment out the next line
 #define MODULE_RELOAD_ON_MAPCHANGE
@@ -46,31 +57,31 @@
 // Uncomment this if you are using MSVC8 or greater and want to fix some of the compatibility issues yourself 
 // #define NO_MSVC8_AUTO_COMPAT
 
-/**
-* AMXX Init functions
-* Also consider using FN_META_*
-*/
+/** 
+ * AMXX Init functions
+ * Also consider using FN_META_*
+ */
 
 /** AMXX query */
 //#define FN_AMXX_QUERY OnAmxxQuery
 
 /** AMXX Check Game - module API is NOT available here.
-* Return AMXX_GAME_OK if this module can load on the game, AMXX_GAME_BAD if it cannot.
-* syntax: int AmxxCheckGame(const char *game)
-*/
+ * Return AMXX_GAME_OK if this module can load on the game, AMXX_GAME_BAD if it cannot.
+ * syntax: int AmxxCheckGame(const char *game)
+ */
 //#define FN_AMXX_CHECKGAME AmxxCheckGame
 
 /** AMXX attach
-* Do native functions init here (MF_AddNatives)
-*/
+ * Do native functions init here (MF_AddNatives)
+ */
 #define FN_AMXX_ATTACH OnAmxxAttach
 
 /** AMXX Detach (unload) */
 //#define FN_AMXX_DETACH OnAmxxDetach
 
 /** All plugins loaded
-* Do forward functions init here (MF_RegisterForward)
-*/
+ * Do forward functions init here (MF_RegisterForward)
+ */
 #define FN_AMXX_PLUGINSLOADED OnPluginsLoaded
 
 /** All plugins are about to be unloaded */

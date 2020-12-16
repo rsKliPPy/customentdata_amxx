@@ -1,7 +1,16 @@
-/*
-* AMX Mod X Module Interface Functions
-* This file may be freely used
-*/
+// vim: set ts=4 sw=4 tw=99 noet:
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+//
+
+//
+// Module SDK
+//
 
 // prevent double include
 #ifndef __AMXXMODULE_H__
@@ -9,6 +18,7 @@
 
 // config
 #include "moduleconfig.h"
+#include <IGameConfigs.h>
 
 #include <stddef.h> // size_t
 // metamod include files
@@ -44,7 +54,8 @@
 #define AMXX_INTERFACE_VERSION 4
 
 // amxx module info
-struct amxx_module_info_s {
+struct amxx_module_info_s
+{
 	const char *name;
 	const char *author;
 	const char *version;
@@ -68,352 +79,352 @@ struct amxx_module_info_s {
 // Copyright (c) ITB CompuPhase, 1997-2005
 
 #if defined HAVE_STDINT_H
-#include <stdint.h>
+  #include <stdint.h>
 #else
-#if defined __LCC__ || defined __DMC__ || defined LINUX || defined __APPLE__
-#if defined HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#include <stdint.h>
-#endif
-#elif !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
-/* The ISO C99 defines the int16_t and int_32t types. If the compiler got
-* here, these types are probably undefined.
-*/
-#if defined __MACH__
-#include <ppc/types.h>
-typedef unsigned short int  uint16_t;
-typedef unsigned long int   uint32_t;
-#elif defined __FreeBSD__
-#include <inttypes.h>
-#else
-typedef short int           int16_t;
-typedef unsigned short int  uint16_t;
-#if defined SN_TARGET_PS2
-typedef int               int32_t;
-typedef unsigned int      uint32_t;
-#else
-typedef long int          int32_t;
-typedef unsigned long int uint32_t;
-#endif
-#if defined __WIN32__ || defined _WIN32 || defined WIN32
-typedef __int64	          int64_t;
-typedef unsigned __int64  uint64_t;
-#define HAVE_I64
-#elif defined __GNUC__
-typedef long long         int64_t;
-typedef unsigned long long uint64_t;
-#define HAVE_I64
-#endif
-#endif
-#endif
-#define HAVE_STDINT_H
+  #if defined __LCC__ || defined __DMC__ || defined LINUX || defined __APPLE__
+    #if defined HAVE_INTTYPES_H
+      #include <inttypes.h>
+    #else
+      #include <stdint.h>
+    #endif
+  #elif !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
+    /* The ISO C99 defines the int16_t and int_32t types. If the compiler got
+     * here, these types are probably undefined.
+     */
+    #if defined __MACH__
+      #include <ppc/types.h>
+      typedef unsigned short int  uint16_t;
+      typedef unsigned long int   uint32_t;
+    #elif defined __FreeBSD__
+      #include <inttypes.h>
+    #else
+      typedef short int           int16_t;
+      typedef unsigned short int  uint16_t;
+      #if defined SN_TARGET_PS2
+        typedef int               int32_t;
+        typedef unsigned int      uint32_t;
+      #else
+        typedef long int          int32_t;
+        typedef unsigned long int uint32_t;
+      #endif
+      #if defined __WIN32__ || defined _WIN32 || defined WIN32
+        typedef __int64	          int64_t;
+        typedef unsigned __int64  uint64_t;
+        #define HAVE_I64
+      #elif defined __GNUC__
+        typedef long long         int64_t;
+        typedef unsigned long long uint64_t;
+        #define HAVE_I64
+      #endif
+    #endif
+  #endif
+  #define HAVE_STDINT_H
 #endif
 #if defined _LP64 || defined WIN64 || defined _WIN64
-#if !defined __64BIT__
-#define __64BIT__
-#endif
+  #if !defined __64BIT__
+    #define __64BIT__
+  #endif
 #endif
 
 /* calling convention for native functions */
 #if !defined AMX_NATIVE_CALL
-#define AMX_NATIVE_CALL
+  #define AMX_NATIVE_CALL
 #endif
 /* calling convention for all interface functions and callback functions */
 #if !defined AMXAPI
-#if defined STDECL
-#define AMXAPI      __stdcall
-#elif defined CDECL
-#define AMXAPI      __cdecl
-#else
-#define AMXAPI
-#endif
+  #if defined STDECL
+    #define AMXAPI      __stdcall
+  #elif defined CDECL
+    #define AMXAPI      __cdecl
+  #else
+    #define AMXAPI
+  #endif
 #endif
 #if !defined AMXEXPORT
-#define AMXEXPORT
+  #define AMXEXPORT
 #endif
 
 #if !defined PAWN_CELL_SIZE
-#define PAWN_CELL_SIZE 32     /* by default, use 32-bit cells */
+  #define PAWN_CELL_SIZE 32     /* by default, use 32-bit cells */
 #endif
 #if PAWN_CELL_SIZE==16
-typedef uint16_t  ucell;
-typedef int16_t   cell;
+  typedef uint16_t  ucell;
+  typedef int16_t   cell;
 #elif PAWN_CELL_SIZE==32
-typedef uint32_t  ucell;
-typedef int32_t   cell;
+  typedef uint32_t  ucell;
+  typedef int32_t   cell;
 #define REAL	float
 #elif PAWN_CELL_SIZE==64
-typedef uint64_t  ucell;
-typedef int64_t   cell;
+  typedef uint64_t  ucell;
+  typedef int64_t   cell;
 #define REAL	double
 #else
-#error Unsupported cell size (PAWN_CELL_SIZE)
+  #error Unsupported cell size (PAWN_CELL_SIZE)
 #endif
 
 #define UNPACKEDMAX   ((1 << (sizeof(cell)-1)*8) - 1)
 #define UNLIMITED     (~1u >> 1)
 
 struct tagAMX;
-typedef cell(AMX_NATIVE_CALL *AMX_NATIVE)(struct tagAMX *amx, cell *params);
+typedef cell (AMX_NATIVE_CALL *AMX_NATIVE)(struct tagAMX *amx, cell *params);
 typedef int (AMXAPI *AMX_CALLBACK)(struct tagAMX *amx, cell index,
-	cell *result, cell *params);
+                                   cell *result, cell *params);
 typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 #if !defined _FAR
-#define _FAR
+  #define _FAR
 #endif
 
 #if defined _MSC_VER
-#pragma warning(disable:4103)  /* disable warning message 4103 that complains
-* about pragma pack in a header file */
-#pragma warning(disable:4100)  /* "'%$S' : unreferenced formal parameter" */
+	#pragma warning(disable:4103)  /* disable warning message 4103 that complains
+	                                * about pragma pack in a header file */
+	#pragma warning(disable:4100)  /* "'%$S' : unreferenced formal parameter" */
 
-#if _MSC_VER >= 1400
-#if !defined NO_MSVC8_AUTO_COMPAT
+	#if _MSC_VER >= 1400
+		#if !defined NO_MSVC8_AUTO_COMPAT
 
-/* Disable deprecation warnings concerning unsafe CRT functions */
-#if !defined _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
+			/* Disable deprecation warnings concerning unsafe CRT functions */
+			#if !defined _CRT_SECURE_NO_DEPRECATE
+				#define _CRT_SECURE_NO_DEPRECATE
+			#endif
 
-/* Replace the POSIX function with ISO C++ conformant ones as they are now deprecated */
-#define access _access
-#define cabs _cabs
-#define cgets _cgets
-#define chdir _chdir
-#define chmod _chmod
-#define chsize _chsize
-#define close _close
-#define cprintf _cprintf
-#define cputs _cputts
-#define creat _creat
-#define cscanf _cscanf
-#define cwait _cwait
-#define dup _dup
-#define dup2 _dup2
-#define ecvt _ecvt
-#define eof _eof
-#define execl _execl
-#define execle _execle
-#define execlp _execlp
-#define execlpe _execlpe
-#define execv _execv
-#define execve _execv
-#define execvp _execvp
-#define execvpe _execvpe
-#define fcloseall _fcloseall
-#define fcvt _fcvt
-#define fdopen _fdopen
-#define fgetchar _fgetchar
-#define filelength _filelength
-#define fileno _fileno
-#define flushall _flushall
-#define fputchar _fputchar
-#define gcvt _gcvt
-#define getch _getch
-#define getche _getche
-#define getcwd _getcwd
-#define getpid _getpid
-#define getw _getw
-#define hypot _hypot
-#define inp _inp
-#define inpw _inpw
-#define isascii __isascii
-#define isatty _isatty
-#define iscsym __iscsym
-#define iscsymf __iscsymf
-#define itoa _itoa
-#define j0 _j0
-#define j1 _j1
-#define jn _jn
-#define kbhit _kbhit
-#define lfind _lfind
-#define locking _locking
-#define lsearch _lsearch
-#define lseek _lseek
-#define ltoa _ltoa
-#define memccpy _memccpy
-#define memicmp _memicmp
-#define mkdir _mkdir
-#define mktemp _mktemp
-#define open _open
-#define outp _outp
-#define outpw _outpw
-#define putch _putch
-#define putenv _putenv
-#define putw _putw
-#define read _read
-#define rmdir _rmdir
-#define rmtmp _rmtmp
-#define setmode _setmode
-#define sopen _sopen
-#define spawnl _spawnl
-#define spawnle _spawnle
-#define spawnlp _spawnlp
-#define spawnlpe _spawnlpe
-#define spawnv _spawnv
-#define spawnve _spawnve
-#define spawnvp _spawnvp
-#define spawnvpe _spawnvpe
-#define strcmpi _strcmpi
-#define strdup _strdup
-#define stricmp _stricmp
-#define strlwr _strlwr
-#define strnicmp _strnicmp
-#define strnset _strnset
-#define strrev _strrev
-#define strset _strset
-#define strupr _strupr
-#define swab _swab
-#define tell _tell
-#define tempnam _tempnam
-#define toascii __toascii
-#define tzset _tzset
-#define ultoa _ultoa
-#define umask _umask
-#define ungetch _ungetch
-#define unlink _unlink
-#define wcsdup _wcsdup
-#define wcsicmp _wcsicmp
-#define wcsicoll _wcsicoll
-#define wcslwr _wcslwr
-#define wcsnicmp _wcsnicmp
-#define wcsnset _wcsnset
-#define wcsrev _wcsrev
-#define wcsset _wcsset
-#define wcsupr _wcsupr
-#define write _write
-#define y0 _y0
-#define y1 _y1
-#define yn _yn
+			/* Replace the POSIX function with ISO C++ conformant ones as they are now deprecated */
+			#define access _access
+			#define cabs _cabs
+			#define cgets _cgets
+			#define chdir _chdir
+			#define chmod _chmod
+			#define chsize _chsize
+			#define close _close
+			#define cprintf _cprintf
+			#define cputs _cputts
+			#define creat _creat
+			#define cscanf _cscanf
+			#define cwait _cwait
+			#define dup _dup
+			#define dup2 _dup2
+			#define ecvt _ecvt
+			#define eof _eof
+			#define execl _execl
+			#define execle _execle
+			#define execlp _execlp
+			#define execlpe _execlpe
+			#define execv _execv
+			#define execve _execv
+			#define execvp _execvp
+			#define execvpe _execvpe
+			#define fcloseall _fcloseall
+			#define fcvt _fcvt
+			#define fdopen _fdopen
+			#define fgetchar _fgetchar
+			#define filelength _filelength
+			#define fileno _fileno
+			#define flushall _flushall
+			#define fputchar _fputchar
+			#define gcvt _gcvt
+			#define getch _getch
+			#define getche _getche
+			#define getcwd _getcwd
+			#define getpid _getpid
+			#define getw _getw
+			#define hypot _hypot
+			#define inp _inp
+			#define inpw _inpw
+			#define isascii __isascii
+			#define isatty _isatty
+			#define iscsym __iscsym
+			#define iscsymf __iscsymf
+			#define itoa _itoa
+			#define j0 _j0
+			#define j1 _j1
+			#define jn _jn
+			#define kbhit _kbhit
+			#define lfind _lfind
+			#define locking _locking
+			#define lsearch _lsearch
+			#define lseek _lseek
+			#define ltoa _ltoa
+			#define memccpy _memccpy
+			#define memicmp _memicmp
+			#define mkdir _mkdir
+			#define mktemp _mktemp
+			#define open _open
+			#define outp _outp
+			#define outpw _outpw
+			#define putch _putch
+			#define putenv _putenv
+			#define putw _putw
+			#define read _read
+			#define rmdir _rmdir
+			#define rmtmp _rmtmp
+			#define setmode _setmode
+			#define sopen _sopen
+			#define spawnl _spawnl
+			#define spawnle _spawnle
+			#define spawnlp _spawnlp
+			#define spawnlpe _spawnlpe
+			#define spawnv _spawnv
+			#define spawnve _spawnve
+			#define spawnvp _spawnvp
+			#define spawnvpe _spawnvpe
+			#define strcmpi _strcmpi
+			#define strdup _strdup
+			#define stricmp _stricmp
+			#define strlwr _strlwr
+			#define strnicmp _strnicmp
+			#define strnset _strnset
+			#define strrev _strrev
+			#define strset _strset
+			#define strupr _strupr
+			#define swab _swab
+			#define tell _tell
+			#define tempnam _tempnam
+			#define toascii __toascii
+			#define tzset _tzset
+			#define ultoa _ultoa
+			#define umask _umask
+			#define ungetch _ungetch
+			#define unlink _unlink
+			#define wcsdup _wcsdup
+			#define wcsicmp _wcsicmp
+			#define wcsicoll _wcsicoll
+			#define wcslwr _wcslwr
+			#define wcsnicmp _wcsnicmp
+			#define wcsnset _wcsnset
+			#define wcsrev _wcsrev
+			#define wcsset _wcsset
+			#define wcsupr _wcsupr
+			#define write _write
+			#define y0 _y0
+			#define y1 _y1
+			#define yn _yn
 
-/* Disable deprecation warnings because MSVC8 seemingly thinks the ISO C++ conformant
-* functions above are deprecated. */
-#pragma warning (disable:4996)
-
-#endif
-#else
-#define vsnprintf _vsnprintf
-#endif
+			/* Disable deprecation warnings because MSVC8 seemingly thinks the ISO C++ conformant 
+			 * functions above are deprecated. */
+			#pragma warning (disable:4996)
+				
+		#endif
+	#else
+		#define vsnprintf _vsnprintf
+	#endif
 #endif
 
 
 /* Some compilers do not support the #pragma align, which should be fine. Some
-* compilers give a warning on unknown #pragmas, which is not so fine...
-*/
+ * compilers give a warning on unknown #pragmas, which is not so fine...
+ */
 #if (defined SN_TARGET_PS2 || defined __GNUC__) && !defined AMX_NO_ALIGN
-#define AMX_NO_ALIGN
+  #define AMX_NO_ALIGN
 #endif
 
 #if defined __GNUC__
-#define PACKED        __attribute__((packed))
+  #define PACKED        __attribute__((packed))
 #else
-#define PACKED
+  #define PACKED
 #endif
 
 #if !defined AMX_NO_ALIGN
-#if defined LINUX || defined __FreeBSD__ || defined __APPLE__
-#pragma pack(1)         /* structures must be packed (byte-aligned) */
-#elif defined MACOS && defined __MWERKS__
-#pragma options align=mac68k
-#else
-#pragma pack(push)
-#pragma pack(1)         /* structures must be packed (byte-aligned) */
-#if defined __TURBOC__
-#pragma option -a-    /* "pack" pragma for older Borland compilers */
-#endif
-#endif
+  #if defined LINUX || defined __FreeBSD__ || defined __APPLE__
+    #pragma pack(1)         /* structures must be packed (byte-aligned) */
+  #elif defined MACOS && defined __MWERKS__
+	#pragma options align=mac68k
+  #else
+    #pragma pack(push)
+    #pragma pack(1)         /* structures must be packed (byte-aligned) */
+    #if defined __TURBOC__
+      #pragma option -a-    /* "pack" pragma for older Borland compilers */
+    #endif
+  #endif
 #endif
 
 typedef struct {
-	const char _FAR *name PACKED;
-	AMX_NATIVE func       PACKED;
+  const char _FAR *name PACKED;
+  AMX_NATIVE func       PACKED;
 } AMX_NATIVE_INFO;
 
 #define AMX_USERNUM     4
 
 /* The AMX structure is the internal structure for many functions. Not all
-* fields are valid at all times; many fields are cached in local variables.
-*/
+ * fields are valid at all times; many fields are cached in local variables.
+ */
 typedef struct tagAMX {
-	unsigned char _FAR *base PACKED; /* points to the AMX header plus the code, optionally also the data */
-	unsigned char _FAR *data PACKED; /* points to separate data+stack+heap, may be NULL */
-	AMX_CALLBACK callback PACKED;
-	AMX_DEBUG debug       PACKED; /* debug callback */
-								  /* for external functions a few registers must be accessible from the outside */
-	cell cip              PACKED; /* instruction pointer: relative to base + amxhdr->cod */
-	cell frm              PACKED; /* stack frame base: relative to base + amxhdr->dat */
-	cell hea              PACKED; /* top of the heap: relative to base + amxhdr->dat */
-	cell hlw              PACKED; /* bottom of the heap: relative to base + amxhdr->dat */
-	cell stk              PACKED; /* stack pointer: relative to base + amxhdr->dat */
-	cell stp              PACKED; /* top of the stack: relative to base + amxhdr->dat */
-	int flags             PACKED; /* current status, see amx_Flags() */
-								  /* user data */
-	long usertags[AMX_USERNUM] PACKED;
-	//okay userdata[3] in AMX Mod X is for the CPlugin * pointer
-	//we're also gonna set userdata[2] to a special debug structure
-	void _FAR *userdata[AMX_USERNUM] PACKED;
-	/* native functions can raise an error */
-	int error             PACKED;
-	/* passing parameters requires a "count" field */
-	int paramcount;
-	/* the sleep opcode needs to store the full AMX status */
-	cell pri              PACKED;
-	cell alt              PACKED;
-	cell reset_stk        PACKED;
-	cell reset_hea        PACKED;
-	cell sysreq_d         PACKED; /* relocated address/value for the SYSREQ.D opcode */
-								  /* support variables for the JIT */
-	int reloc_size      PACKED; /* required temporary buffer for relocations */
-	long code_size      PACKED; /* estimated memory footprint of the native code */
+  unsigned char _FAR *base PACKED; /* points to the AMX header plus the code, optionally also the data */
+  unsigned char _FAR *data PACKED; /* points to separate data+stack+heap, may be NULL */
+  AMX_CALLBACK callback PACKED;
+  AMX_DEBUG debug       PACKED; /* debug callback */
+  /* for external functions a few registers must be accessible from the outside */
+  cell cip              PACKED; /* instruction pointer: relative to base + amxhdr->cod */
+  cell frm              PACKED; /* stack frame base: relative to base + amxhdr->dat */
+  cell hea              PACKED; /* top of the heap: relative to base + amxhdr->dat */
+  cell hlw              PACKED; /* bottom of the heap: relative to base + amxhdr->dat */
+  cell stk              PACKED; /* stack pointer: relative to base + amxhdr->dat */
+  cell stp              PACKED; /* top of the stack: relative to base + amxhdr->dat */
+  int flags             PACKED; /* current status, see amx_Flags() */
+  /* user data */
+  long usertags[AMX_USERNUM] PACKED;
+  //okay userdata[3] in AMX Mod X is for the CPlugin * pointer
+  //we're also gonna set userdata[2] to a special debug structure
+  void _FAR *userdata[AMX_USERNUM] PACKED;
+  /* native functions can raise an error */
+  int error             PACKED;
+  /* passing parameters requires a "count" field */
+  int paramcount;
+  /* the sleep opcode needs to store the full AMX status */
+  cell pri              PACKED;
+  cell alt              PACKED;
+  cell reset_stk        PACKED;
+  cell reset_hea        PACKED;
+  cell sysreq_d         PACKED; /* relocated address/value for the SYSREQ.D opcode */
+  /* support variables for the JIT */
+  int reloc_size      PACKED; /* required temporary buffer for relocations */
+  long code_size      PACKED; /* estimated memory footprint of the native code */
 } PACKED AMX;
 
 enum {
-	AMX_ERR_NONE,
-	/* reserve the first 15 error codes for exit codes of the abstract machine */
-	AMX_ERR_EXIT,         /* forced exit */
-	AMX_ERR_ASSERT,       /* assertion failed */
-	AMX_ERR_STACKERR,     /* stack/heap collision */
-	AMX_ERR_BOUNDS,       /* index out of bounds */
-	AMX_ERR_MEMACCESS,    /* invalid memory access */
-	AMX_ERR_INVINSTR,     /* invalid instruction */
-	AMX_ERR_STACKLOW,     /* stack underflow */
-	AMX_ERR_HEAPLOW,      /* heap underflow */
-	AMX_ERR_CALLBACK,     /* no callback, or invalid callback */
-	AMX_ERR_NATIVE,       /* native function failed */
-	AMX_ERR_DIVIDE,       /* divide by zero */
-	AMX_ERR_SLEEP,        /* go into sleepmode - code can be restarted */
-	AMX_ERR_INVSTATE,     /* invalid state for this access */
+  AMX_ERR_NONE,
+  /* reserve the first 15 error codes for exit codes of the abstract machine */
+  AMX_ERR_EXIT,         /* forced exit */
+  AMX_ERR_ASSERT,       /* assertion failed */
+  AMX_ERR_STACKERR,     /* stack/heap collision */
+  AMX_ERR_BOUNDS,       /* index out of bounds */
+  AMX_ERR_MEMACCESS,    /* invalid memory access */
+  AMX_ERR_INVINSTR,     /* invalid instruction */
+  AMX_ERR_STACKLOW,     /* stack underflow */
+  AMX_ERR_HEAPLOW,      /* heap underflow */
+  AMX_ERR_CALLBACK,     /* no callback, or invalid callback */
+  AMX_ERR_NATIVE,       /* native function failed */
+  AMX_ERR_DIVIDE,       /* divide by zero */
+  AMX_ERR_SLEEP,        /* go into sleepmode - code can be restarted */
+  AMX_ERR_INVSTATE,     /* invalid state for this access */
 
-	AMX_ERR_MEMORY = 16,  /* out of memory */
-	AMX_ERR_FORMAT,       /* invalid file format */
-	AMX_ERR_VERSION,      /* file is for a newer version of the AMX */
-	AMX_ERR_NOTFOUND,     /* function not found */
-	AMX_ERR_INDEX,        /* invalid index parameter (bad entry point) */
-	AMX_ERR_DEBUG,        /* debugger cannot run */
-	AMX_ERR_INIT,         /* AMX not initialized (or doubly initialized) */
-	AMX_ERR_USERDATA,     /* unable to set user data field (table full) */
-	AMX_ERR_INIT_JIT,     /* cannot initialize the JIT */
-	AMX_ERR_PARAMS,       /* parameter error */
-	AMX_ERR_DOMAIN,       /* domain error, expression result does not fit in range */
+  AMX_ERR_MEMORY = 16,  /* out of memory */
+  AMX_ERR_FORMAT,       /* invalid file format */
+  AMX_ERR_VERSION,      /* file is for a newer version of the AMX */
+  AMX_ERR_NOTFOUND,     /* function not found */
+  AMX_ERR_INDEX,        /* invalid index parameter (bad entry point) */
+  AMX_ERR_DEBUG,        /* debugger cannot run */
+  AMX_ERR_INIT,         /* AMX not initialized (or doubly initialized) */
+  AMX_ERR_USERDATA,     /* unable to set user data field (table full) */
+  AMX_ERR_INIT_JIT,     /* cannot initialize the JIT */
+  AMX_ERR_PARAMS,       /* parameter error */
+  AMX_ERR_DOMAIN,       /* domain error, expression result does not fit in range */
 };
 
 #if !defined AMX_NO_ALIGN
-#if defined(__linux__) || defined(__APPLE__)
-#pragma pack()    /* reset default packing */
-#else
-#pragma pack(pop) /* reset previous packing */
-#endif
+  #if defined(__linux__) || defined(__APPLE__)
+    #pragma pack()    /* reset default packing */
+  #else
+    #pragma pack(pop) /* reset previous packing */
+  #endif
 #endif
 
 
 // ***** declare functions *****
 
 #ifdef USE_METAMOD
-void UTIL_LogPrintf(const char *fmt, ...);
+void UTIL_LogPrintf( const char *fmt, ... );
 void UTIL_HudMessage(CBaseEntity *pEntity, const hudtextparms_t &textparms, const char *pMessage);
-short FixedSigned16(float value, float scale);
-unsigned short FixedUnsigned16(float value, float scale);
+short FixedSigned16( float value, float scale );
+unsigned short FixedUnsigned16( float value, float scale );
 
 #ifdef FN_META_QUERY
 void FN_META_QUERY(void);
@@ -492,7 +503,7 @@ void FN_ResetGlobalState(void);
 #endif // FN_ResetGlobalState
 
 #ifdef FN_ClientConnect
-BOOL FN_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128]);
+BOOL FN_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[ 128 ]);
 #endif // FN_ClientConnect
 
 #ifdef FN_ClientDisconnect
@@ -695,7 +706,7 @@ void FN_ResetGlobalState_Post(void);
 #endif // FN_ResetGlobalState_Post
 
 #ifdef FN_ClientConnect_Post
-BOOL FN_ClientConnect_Post(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128]);
+BOOL FN_ClientConnect_Post(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[ 128 ]);
 #endif // FN_ClientConnect_Post
 
 #ifdef FN_ClientDisconnect_Post
@@ -981,7 +992,7 @@ void FN_TraceModel(const float *v1, const float *v2, int hullNumber, edict_t *pe
 #endif // FN_TraceModel
 
 #ifdef FN_TraceTexture
-const char *FN_TraceTexture(edict_t *pTextureEntity, const float *v1, const float *v2);
+const char *FN_TraceTexture(edict_t *pTextureEntity, const float *v1, const float *v2 );
 #endif // FN_TraceTexture
 
 #ifdef FN_TraceSphere
@@ -1009,7 +1020,7 @@ void FN_ParticleEffect(const float *org, const float *dir, float color, float co
 #endif // FN_ParticleEffect
 
 #ifdef FN_LightStyle
-void FN_LightStyle(int style, char *val);
+void FN_LightStyle(int style, const char *val);
 #endif // FN_LightStyle
 
 #ifdef FN_DecalIndex
@@ -1177,7 +1188,7 @@ int FN_Cmd_Argc(void);
 #endif // FN_Cmd_Argc
 
 #ifdef FN_GetAttachment
-void FN_GetAttachment(const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles);
+void FN_GetAttachment(const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles );
 #endif // FN_GetAttachment
 
 #ifdef FN_CRC32_Init
@@ -1217,7 +1228,7 @@ void FN_CrosshairAngle(const edict_t *pClient, float pitch, float yaw);
 #endif // FN_CrosshairAngle
 
 #ifdef FN_LoadFileForMe
-byte *FN_LoadFileForMe(char *filename, int *pLength);
+byte *FN_LoadFileForMe(const char *filename, int *pLength);
 #endif // FN_LoadFileForMe
 
 #ifdef FN_FreeFile
@@ -1289,7 +1300,7 @@ int FN_PrecacheGeneric(const char *s);
 #endif // FN_PrecacheGeneric
 
 #ifdef FN_GetPlayerUserId
-int FN_GetPlayerUserId(edict_t *e);
+int FN_GetPlayerUserId(edict_t *e );
 #endif // FN_GetPlayerUserId
 
 #ifdef FN_BuildSoundMsg
@@ -1309,7 +1320,7 @@ unsigned int FN_GetPlayerWONId(edict_t *e);
 #endif // FN_GetPlayerWONId
 
 #ifdef FN_Info_RemoveKey
-void FN_Info_RemoveKey(char *s, const char *key);
+void FN_Info_RemoveKey( char *s, const char *key);
 #endif // FN_Info_RemoveKey
 
 #ifdef FN_GetPhysicsKeyValue
@@ -1321,7 +1332,7 @@ void FN_SetPhysicsKeyValue(const edict_t *pClient, const char *key, const char *
 #endif // FN_SetPhysicsKeyValue
 
 #ifdef FN_GetPhysicsInfoString
-const char *FN_GetPhysicsInfoString(const edict_t *pClient);
+const char *FN_GetPhysicsInfoString( const edict_t *pClient);
 #endif // FN_GetPhysicsInfoString
 
 #ifdef FN_PrecacheEvent
@@ -1353,7 +1364,7 @@ void FN_DeltaUnsetField(struct delta_s *pFields, const char *fieldname);
 #endif // FN_DeltaUnsetField
 
 #ifdef FN_DeltaAddEncoder
-void FN_DeltaAddEncoder(char *name, void(*conditionalencode)(struct delta_s *pFields, const unsigned char *from, const unsigned char *to));
+void FN_DeltaAddEncoder(const char *name, void (*conditionalencode)( struct delta_s *pFields, const unsigned char *from, const unsigned char *to ) );
 #endif // FN_DeltaAddEncoder
 
 #ifdef FN_GetCurrentPlayer
@@ -1385,7 +1396,7 @@ int FN_engCreateInstancedBaseline(int classname, struct entity_state_s *baseline
 #endif // FN_engCreateInstancedBaseline
 
 #ifdef FN_Cvar_DirectSet
-void FN_Cvar_DirectSet(struct cvar_s *var, char *value);
+void FN_Cvar_DirectSet(struct cvar_s *var, const char *value);
 #endif // FN_Cvar_DirectSet
 
 #ifdef FN_ForceUnmodified
@@ -1397,7 +1408,7 @@ void FN_GetPlayerStats(const edict_t *pClient, int *ping, int *packet_loss);
 #endif // FN_GetPlayerStats
 
 #ifdef FN_AddServerCommand
-void FN_AddServerCommand(char *cmd_name, void(*function) (void));
+void FN_AddServerCommand(char *cmd_name, void (*function) (void));
 #endif // FN_AddServerCommand
 
 #ifdef FN_Voice_GetClientListening
@@ -1562,7 +1573,7 @@ void FN_TraceModel_Post(const float *v1, const float *v2, int hullNumber, edict_
 #endif // FN_TraceModel_Post
 
 #ifdef FN_TraceTexture_Post
-const char *FN_TraceTexture_Post(edict_t *pTextureEntity, const float *v1, const float *v2);
+const char *FN_TraceTexture_Post(edict_t *pTextureEntity, const float *v1, const float *v2 );
 #endif // FN_TraceTexture_Post
 
 #ifdef FN_TraceSphere_Post
@@ -1590,7 +1601,7 @@ void FN_ParticleEffect_Post(const float *org, const float *dir, float color, flo
 #endif // FN_ParticleEffect_Post
 
 #ifdef FN_LightStyle_Post
-void FN_LightStyle_Post(int style, char *val);
+void FN_LightStyle_Post(int style, const char *val);
 #endif // FN_LightStyle_Post
 
 #ifdef FN_DecalIndex_Post
@@ -1758,7 +1769,7 @@ int FN_Cmd_Argc_Post(void);
 #endif // FN_Cmd_Argc_Post
 
 #ifdef FN_GetAttachment_Post
-void FN_GetAttachment_Post(const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles);
+void FN_GetAttachment_Post(const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles );
 #endif // FN_GetAttachment_Post
 
 #ifdef FN_CRC32_Init_Post
@@ -1798,7 +1809,7 @@ void FN_CrosshairAngle_Post(const edict_t *pClient, float pitch, float yaw);
 #endif // FN_CrosshairAngle_Post
 
 #ifdef FN_LoadFileForMe_Post
-byte *FN_LoadFileForMe_Post(char *filename, int *pLength);
+byte *FN_LoadFileForMe_Post(const char *filename, int *pLength);
 #endif // FN_LoadFileForMe_Post
 
 #ifdef FN_FreeFile_Post
@@ -1870,7 +1881,7 @@ int FN_PrecacheGeneric_Post(const char *s);
 #endif // FN_PrecacheGeneric_Post
 
 #ifdef FN_GetPlayerUserId_Post
-int FN_GetPlayerUserId_Post(edict_t *e);
+int FN_GetPlayerUserId_Post(edict_t *e );
 #endif // FN_GetPlayerUserId_Post
 
 #ifdef FN_BuildSoundMsg_Post
@@ -1890,7 +1901,7 @@ unsigned int FN_GetPlayerWONId_Post(edict_t *e);
 #endif // FN_GetPlayerWONId_Post
 
 #ifdef FN_Info_RemoveKey_Post
-void FN_Info_RemoveKey_Post(char *s, const char *key);
+void FN_Info_RemoveKey_Post( char *s, const char *key);
 #endif // FN_Info_RemoveKey_Post
 
 #ifdef FN_GetPhysicsKeyValue_Post
@@ -1902,7 +1913,7 @@ void FN_SetPhysicsKeyValue_Post(const edict_t *pClient, const char *key, const c
 #endif // FN_SetPhysicsKeyValue_Post
 
 #ifdef FN_GetPhysicsInfoString_Post
-const char *FN_GetPhysicsInfoString_Post(const edict_t *pClient);
+const char *FN_GetPhysicsInfoString_Post( const edict_t *pClient);
 #endif // FN_GetPhysicsInfoString_Post
 
 #ifdef FN_PrecacheEvent_Post
@@ -1934,7 +1945,7 @@ void FN_DeltaUnsetField_Post(struct delta_s *pFields, const char *fieldname);
 #endif // FN_DeltaUnsetField_Post
 
 #ifdef FN_DeltaAddEncoder_Post
-void FN_DeltaAddEncoder_Post(char *name, void(*conditionalencode)(struct delta_s *pFields, const unsigned char *from, const unsigned char *to));
+void FN_DeltaAddEncoder_Post(const char *name, void (*conditionalencode)( struct delta_s *pFields, const unsigned char *from, const unsigned char *to ) );
 #endif // FN_DeltaAddEncoder_Post
 
 #ifdef FN_GetCurrentPlayer_Post
@@ -1966,7 +1977,7 @@ int FN_engCreateInstancedBaseline_Post(int classname, struct entity_state_s *bas
 #endif // FN_engCreateInstancedBaseline_Post
 
 #ifdef FN_Cvar_DirectSet_Post
-void FN_Cvar_DirectSet_Post(struct cvar_s *var, char *value);
+void FN_Cvar_DirectSet_Post(struct cvar_s *var, const char *value);
 #endif // FN_Cvar_DirectSet_Post
 
 #ifdef FN_ForceUnmodified_Post
@@ -1978,7 +1989,7 @@ void FN_GetPlayerStats_Post(const edict_t *pClient, int *ping, int *packet_loss)
 #endif // FN_GetPlayerStats_Post
 
 #ifdef FN_AddServerCommand_Post
-void FN_AddServerCommand_Post(char *cmd_name, void(*function)(void));
+void FN_AddServerCommand_Post(char *cmd_name, void (*function)(void));
 #endif // FN_AddServerCommand_Post
 
 #ifdef FN_Voice_GetClientListening_Post
@@ -2059,14 +2070,16 @@ void FN_AMXX_PLUGINSUNLOADED(void);
 typedef void* (*PFN_REQ_FNPTR)(const char * /*name*/);
 
 // ***** Module funcs stuff *****
-enum ForwardExecType {
+enum ForwardExecType
+{
 	ET_IGNORE = 0,					// Ignore return vaue
 	ET_STOP,						// Stop on PLUGIN_HANDLED
 	ET_STOP2,						// Stop on PLUGIN_HANDLED, continue on other values, return biggest return value
 	ET_CONTINUE,					// Continue; return biggest return value
 };
 
-enum ForwardParam {
+enum ForwardParam
+{
 	FP_DONE = -1,					// specify this as the last argument
 									// only tells the function that there are no more arguments
 	FP_CELL,						// normal cell
@@ -2074,9 +2087,12 @@ enum ForwardParam {
 	FP_STRING,						// string
 	FP_STRINGEX,					// string; will be updated to the last function's value
 	FP_ARRAY,						// array; use the return value of prepareArray.
+	FP_CELL_BYREF,                  // cell; pass by reference
+	FP_FLOAT_BYREF,                 // float; pass by reference
 };
 
-enum PlayerProp {
+enum PlayerProp
+{
 	Player_Name,		//String
 	Player_Ip,			//String
 	Player_Team,		//String
@@ -2098,7 +2114,8 @@ enum PlayerProp {
 	Player_NewmenuPage,		//int
 };
 
-enum LibType {
+enum LibType
+{
 	LibType_Library,
 	LibType_Class
 };
@@ -2109,54 +2126,58 @@ enum LibType {
 #define BLOCK_ONCE 1
 #define BLOCK_SET 2
 
-typedef void(*AUTHORIZEFUNC)(int player, const char *authstring);
+typedef void (*AUTHORIZEFUNC)(int player, const char *authstring);
 
-typedef int(*PFN_ADD_NATIVES)				(const AMX_NATIVE_INFO * /*list*/);
-typedef int(*PFN_ADD_NEW_NATIVES)			(const AMX_NATIVE_INFO * /*list*/);
+typedef int				(*PFN_ADD_NATIVES)				(const AMX_NATIVE_INFO * /*list*/);
+typedef int				(*PFN_ADD_NEW_NATIVES)			(const AMX_NATIVE_INFO * /*list*/);
 typedef char *			(*PFN_BUILD_PATHNAME)			(const char * /*format*/, ...);
 typedef char *			(*PFN_BUILD_PATHNAME_R)			(char * /*buffer*/, size_t /* maxlen */, const char * /* format */, ...);
 typedef cell *			(*PFN_GET_AMXADDR)				(AMX * /*amx*/, cell /*offset*/);
-typedef void(*PFN_PRINT_SRVCONSOLE)			(const char * /*format*/, ...);
+typedef cell *			(*PFN_GET_AMXVECTOR_NULL)		(AMX * /*amx*/, cell /*offset*/);
+typedef void			(*PFN_PRINT_SRVCONSOLE)			(const char * /*format*/, ...);
 typedef const char *	(*PFN_GET_MODNAME)				(void);
 typedef const char *	(*PFN_GET_AMXSCRIPTNAME)		(int /*id*/);
 typedef AMX *			(*PFN_GET_AMXSCRIPT)			(int /*id*/);
-typedef int(*PFN_FIND_AMXSCRIPT_BYAMX)		(const AMX * /*amx*/);
-typedef int(*PFN_FIND_AMXSCRIPT_BYNAME)	(const char * /*name*/);
-typedef int(*PFN_SET_AMXSTRING)			(AMX * /*amx*/, cell /*amx_addr*/, const char * /* source */, int /* max */);
+typedef int				(*PFN_FIND_AMXSCRIPT_BYAMX)		(const AMX * /*amx*/);
+typedef int				(*PFN_FIND_AMXSCRIPT_BYNAME)	(const char * /*name*/);
+typedef int				(*PFN_SET_AMXSTRING)			(AMX * /*amx*/, cell /*amx_addr*/, const char * /* source */, int /* max */);
+typedef int				(*PFN_SET_AMXSTRING_UTF8_CHAR)	(AMX *amx, cell amx_addr, const char *source, size_t sourcelen, size_t maxlen);
+typedef int				(*PFN_SET_AMXSTRING_UTF8_CELL)	(AMX *amx, cell amx_addr, const cell *source, size_t sourcelen, size_t maxlen);
 typedef char *			(*PFN_GET_AMXSTRING)			(AMX * /*amx*/, cell /*amx_addr*/, int /*bufferId*/, int * /*pLen*/);
-typedef int(*PFN_GET_AMXSTRINGLEN)			(const cell *ptr);
+typedef char *			(*PFN_GET_AMXSTRING_NULL)		(AMX * /*amx*/, cell /*amx_addr*/, int /*bufferId*/, int * /*pLen*/);
+typedef int				(*PFN_GET_AMXSTRINGLEN)			(const cell *ptr);
 typedef char *			(*PFN_FORMAT_AMXSTRING)			(AMX * /*amx*/, cell * /*params*/, int /*startParam*/, int * /*pLen*/);
-typedef void(*PFN_COPY_AMXMEMORY)			(cell * /*dest*/, const cell * /*src*/, int /*len*/);
-typedef void(*PFN_LOG)						(const char * /*fmt*/, ...);
-typedef void(*PFN_LOG_ERROR)				(AMX * /*amx*/, int /*err*/, const char * /*fmt*/, ...);
-typedef int(*PFN_RAISE_AMXERROR)			(AMX * /*amx*/, int /*error*/);
-typedef int(*PFN_REGISTER_FORWARD)			(const char * /*funcname*/, ForwardExecType /*exectype*/, ... /*paramtypes terminated by PF_DONE*/);
-typedef int(*PFN_EXECUTE_FORWARD)			(int /*id*/, ... /*params*/);
-typedef cell(*PFN_PREPARE_CELLARRAY)		(cell * /*ptr*/, unsigned int /*size*/);
-typedef cell(*PFN_PREPARE_CHARARRAY)		(char * /*ptr*/, unsigned int /*size*/);
-typedef cell(*PFN_PREPARE_CELLARRAY_A)		(cell * /*ptr*/, unsigned int /*size*/, bool /*copyBack*/);
-typedef cell(*PFN_PREPARE_CHARARRAY_A)		(char * /*ptr*/, unsigned int /*size*/, bool /*copyBack*/);
-typedef int(*PFN_IS_PLAYER_VALID)			(int /*id*/);
+typedef void			(*PFN_COPY_AMXMEMORY)			(cell * /*dest*/, const cell * /*src*/, int /*len*/);
+typedef void			(*PFN_LOG)						(const char * /*fmt*/, ...);
+typedef void			(*PFN_LOG_ERROR)				(AMX * /*amx*/, int /*err*/, const char * /*fmt*/, ...);
+typedef int				(*PFN_RAISE_AMXERROR)			(AMX * /*amx*/, int /*error*/);
+typedef int				(*PFN_REGISTER_FORWARD)			(const char * /*funcname*/, ForwardExecType /*exectype*/, ... /*paramtypes terminated by PF_DONE*/);
+typedef int				(*PFN_EXECUTE_FORWARD)			(int /*id*/, ... /*params*/);
+typedef cell			(*PFN_PREPARE_CELLARRAY)		(cell * /*ptr*/, unsigned int /*size*/);
+typedef cell			(*PFN_PREPARE_CHARARRAY)		(char * /*ptr*/, unsigned int /*size*/);
+typedef cell			(*PFN_PREPARE_CELLARRAY_A)		(cell * /*ptr*/, unsigned int /*size*/, bool /*copyBack*/);
+typedef cell			(*PFN_PREPARE_CHARARRAY_A)		(char * /*ptr*/, unsigned int /*size*/, bool /*copyBack*/);
+typedef int				(*PFN_IS_PLAYER_VALID)			(int /*id*/);
 typedef const char *	(*PFN_GET_PLAYER_NAME)			(int /*id*/);
 typedef const char *	(*PFN_GET_PLAYER_IP)			(int /*id*/);
-typedef int(*PFN_IS_PLAYER_INGAME)			(int /*id*/);
-typedef int(*PFN_IS_PLAYER_BOT)			(int /*id*/);
-typedef int(*PFN_IS_PLAYER_AUTHORIZED)		(int /*id*/);
-typedef float(*PFN_GET_PLAYER_TIME)			(int /*id*/);
-typedef float(*PFN_GET_PLAYER_PLAYTIME)		(int /*id*/);
-typedef int(*PFN_GETPLAYERFLAGS) 			(int /* id*/);
-typedef int(*PFN_GET_PLAYER_CURWEAPON)		(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_INGAME)			(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_BOT)			(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_AUTHORIZED)		(int /*id*/);
+typedef float			(*PFN_GET_PLAYER_TIME)			(int /*id*/);
+typedef float			(*PFN_GET_PLAYER_PLAYTIME)		(int /*id*/);
+typedef int				(*PFN_GETPLAYERFLAGS) 			(int /* id*/);
+typedef int				(*PFN_GET_PLAYER_CURWEAPON)		(int /*id*/);
 typedef const char *    (*PFN_GET_PLAYER_TEAM)			(int /*id*/);
-typedef int(*PFN_GET_PLAYER_TEAMID)		(int /*id*/);
-typedef int(*PFN_GET_PLAYER_DEATHS)		(int /*id*/);
-typedef int(*PFN_GET_PLAYER_MENU)			(int /*id*/);
-typedef int(*PFN_GET_PLAYER_KEYS)			(int /*id*/);
-typedef int(*PFN_IS_PLAYER_ALIVE)			(int /*id*/);
-typedef int(*PFN_GET_PLAYER_FRAGS)			(int /*id*/);
-typedef int(*PFN_IS_PLAYER_CONNECTING)		(int /*id*/);
-typedef int(*PFN_IS_PLAYER_HLTV)			(int /*id*/);
-typedef int(*PFN_GET_PLAYER_ARMOR)			(int /*id*/);
-typedef int(*PFN_GET_PLAYER_HEALTH)		(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_TEAMID)		(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_DEATHS)		(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_MENU)			(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_KEYS)			(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_ALIVE)			(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_FRAGS)			(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_CONNECTING)		(int /*id*/);
+typedef int				(*PFN_IS_PLAYER_HLTV)			(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_ARMOR)			(int /*id*/);
+typedef int				(*PFN_GET_PLAYER_HEALTH)		(int /*id*/);
 #ifdef USE_METAMOD
 typedef edict_t *		(*PFN_GET_PLAYER_EDICT)			(int /*id*/);
 #else
@@ -2166,45 +2187,48 @@ typedef void *			(*PFN_PLAYER_PROP_ADDR)			(int /*id*/, int /*prop*/);
 
 #ifdef MEMORY_TEST
 typedef void *			(*PFN_ALLOCATOR)				(const char* /*filename*/, const unsigned int /*line*/, const char* /*func*/,
-	const unsigned int /*type*/, const size_t /*size*/);
+														 const unsigned int /*type*/, const size_t /*size*/);
 typedef void *			(*PFN_REALLOCATOR)				(const char* /*filename*/, const unsigned int /*line*/, const char* /*func*/,
-	const unsigned int /*type*/, const size_t /*size*/, void* /*addr*/);
-typedef void(*PFN_DEALLOCATOR)				(const char* /*filename*/, const unsigned int /*line*/, const char* /*func*/,
-	const unsigned int /*type*/, const void* /*addr*/);
+														 const unsigned int /*type*/, const size_t /*size*/, void* /*addr*/ );
+typedef void			(*PFN_DEALLOCATOR)				(const char* /*filename*/, const unsigned int /*line*/, const char* /*func*/,
+														 const unsigned int /*type*/, const void* /*addr*/ );
 #endif
-typedef int(*PFN_AMX_EXEC)					(AMX* /*amx*/, cell* /*return val*/, int /*index*/);
-typedef int(*PFN_AMX_EXECV)				(AMX* /*amx*/, cell* /*return val*/, int /*index*/, int /*numparams*/, cell[] /*params*/);
-typedef int(*PFN_AMX_ALLOT)				(AMX* /*amx*/, int /*length*/, cell* /*amx_addr*/, cell** /*phys_addr*/);
-typedef int(*PFN_AMX_FINDPUBLIC)			(AMX* /*amx*/, const char* /*func name*/, int* /*index*/);
-typedef int(*PFN_AMX_FINDNATIVE)			(AMX* /*amx*/, const char* /*func name*/, int* /*index*/);
-typedef int(*PFN_LOAD_AMXSCRIPT)			(AMX* /*amx*/, void** /*code*/, const char* /*path*/, char[64] /*error info*/, int /* debug */);
-typedef int(*PFN_UNLOAD_AMXSCRIPT)			(AMX* /*amx*/, void** /*code*/);
-typedef cell(*PFN_REAL_TO_CELL)				(REAL /*x*/);
-typedef REAL(*PFN_CELL_TO_REAL)				(cell /*x*/);
-typedef int(*PFN_REGISTER_SPFORWARD)		(AMX * /*amx*/, int /*func*/, ... /*params*/);
-typedef int(*PFN_REGISTER_SPFORWARD_BYNAME)	(AMX * /*amx*/, const char * /*funcName*/, ... /*params*/);
-typedef void(*PFN_UNREGISTER_SPFORWARD)		(int /*id*/);
-typedef	void(*PFN_MERGEDEFINITION_FILE)		(const char * /*filename*/);
+typedef int				(*PFN_AMX_EXEC)					(AMX* /*amx*/, cell* /*return val*/, int /*index*/);
+typedef int				(*PFN_AMX_EXECV)				(AMX* /*amx*/, cell* /*return val*/, int /*index*/, int /*numparams*/, cell[] /*params*/);
+typedef int				(*PFN_AMX_ALLOT)				(AMX* /*amx*/, int /*length*/, cell* /*amx_addr*/, cell** /*phys_addr*/);
+typedef int				(*PFN_AMX_FINDPUBLIC)			(AMX* /*amx*/, const char* /*func name*/, int* /*index*/);
+typedef int				(*PFN_AMX_FINDNATIVE)			(AMX* /*amx*/, const char* /*func name*/, int* /*index*/);
+typedef int				(*PFN_LOAD_AMXSCRIPT)			(AMX* /*amx*/, void** /*code*/, const char* /*path*/, char[64] /*error info*/, int /* debug */);
+typedef int				(*PFN_LOAD_AMXSCRIPT_EX)		(AMX* /*amx*/, void** /*code*/, const char* /*path*/, char* /*error info*/, size_t /* max length */, int /* debug */);
+typedef int				(*PFN_UNLOAD_AMXSCRIPT)			(AMX* /*amx*/,void** /*code*/);
+typedef cell			(*PFN_REAL_TO_CELL)				(REAL /*x*/);
+typedef REAL			(*PFN_CELL_TO_REAL)				(cell /*x*/);
+typedef int				(*PFN_REGISTER_SPFORWARD)		(AMX * /*amx*/, int /*func*/, ... /*params*/);
+typedef int				(*PFN_REGISTER_SPFORWARD_BYNAME)	(AMX * /*amx*/, const char * /*funcName*/, ... /*params*/);
+typedef void			(*PFN_UNREGISTER_SPFORWARD)		(int /*id*/);
+typedef	void			(*PFN_MERGEDEFINITION_FILE)		(const char * /*filename*/);
 typedef const char *	(*PFN_FORMAT)					(const char * /*fmt*/, ... /*params*/);
-typedef void(*PFN_REGISTERFUNCTION)			(void * /*pfn*/, const char * /*desc*/);
-typedef	int(*PFN_AMX_PUSH)					(AMX * /*amx*/, cell /*value*/);
-typedef	int(*PFN_SET_TEAM_INFO)			(int /*player */, int /*teamid */, const char * /*name */);
-typedef void(*PFN_REG_AUTH_FUNC)			(AUTHORIZEFUNC);
-typedef void(*PFN_UNREG_AUTH_FUNC)			(AUTHORIZEFUNC);
-typedef int(*PFN_FINDLIBRARY)				(const char * /*name*/, LibType /*type*/);
-typedef size_t(*PFN_ADDLIBRARIES)				(const char * /*name*/, LibType /*type*/, void * /*parent*/);
-typedef size_t(*PFN_REMOVELIBRARIES)			(void * /*parent*/);
-typedef void(*PFN_OVERRIDENATIVES)			(AMX_NATIVE_INFO * /*natives*/, const char * /*myname*/);
+typedef void			(*PFN_REGISTERFUNCTION)			(void * /*pfn*/, const char * /*desc*/);
+typedef	int				(*PFN_AMX_PUSH)					(AMX * /*amx*/, cell /*value*/);
+typedef	int				(*PFN_SET_TEAM_INFO)			(int /*player */, int /*teamid */, const char * /*name */);
+typedef void			(*PFN_REG_AUTH_FUNC)			(AUTHORIZEFUNC);
+typedef void			(*PFN_UNREG_AUTH_FUNC)			(AUTHORIZEFUNC);
+typedef int				(*PFN_FINDLIBRARY)				(const char * /*name*/, LibType /*type*/);
+typedef size_t			(*PFN_ADDLIBRARIES)				(const char * /*name*/, LibType /*type*/, void * /*parent*/);
+typedef size_t			(*PFN_REMOVELIBRARIES)			(void * /*parent*/);
+typedef void			(*PFN_OVERRIDENATIVES)			(AMX_NATIVE_INFO * /*natives*/, const char * /*myname*/);
 typedef const char *	(*PFN_GETLOCALINFO)				(const char * /*name*/, const char * /*def*/);
-typedef int(*PFN_AMX_REREGISTER)			(AMX * /*amx*/, AMX_NATIVE_INFO * /*list*/, int /*list*/);
+typedef int				(*PFN_AMX_REREGISTER)			(AMX * /*amx*/, AMX_NATIVE_INFO * /*list*/, int /*list*/);
 typedef void *			(*PFN_REGISTERFUNCTIONEX)		(void * /*pfn*/, const char * /*desc*/);
-typedef void(*PFN_MESSAGE_BLOCK)			(int /* mode */, int /* message */, int * /* opt */);
+typedef void			(*PFN_MESSAGE_BLOCK)			(int /* mode */, int /* message */, int * /* opt */);
+typedef IGameConfigManager* (*PFN_GET_CONFIG_MANAGER)   ();
 
 extern PFN_ADD_NATIVES				g_fn_AddNatives;
 extern PFN_ADD_NEW_NATIVES			g_fn_AddNewNatives;
 extern PFN_BUILD_PATHNAME			g_fn_BuildPathname;
 extern PFN_BUILD_PATHNAME_R			g_fn_BuildPathnameR;
 extern PFN_GET_AMXADDR				g_fn_GetAmxAddr;
+extern PFN_GET_AMXVECTOR_NULL		g_fn_GetAmxVectorNull;
 extern PFN_PRINT_SRVCONSOLE			g_fn_PrintSrvConsole;
 extern PFN_GET_MODNAME				g_fn_GetModname;
 extern PFN_GET_AMXSCRIPTNAME		g_fn_GetAmxScriptName;
@@ -2212,7 +2236,10 @@ extern PFN_GET_AMXSCRIPT			g_fn_GetAmxScript;
 extern PFN_FIND_AMXSCRIPT_BYAMX		g_fn_FindAmxScriptByAmx;
 extern PFN_FIND_AMXSCRIPT_BYNAME	g_fn_FindAmxScriptByName;
 extern PFN_SET_AMXSTRING			g_fn_SetAmxString;
+extern PFN_SET_AMXSTRING_UTF8_CHAR	g_fn_SetAmxStringUTF8Char;
+extern PFN_SET_AMXSTRING_UTF8_CELL	g_fn_SetAmxStringUTF8Cell;
 extern PFN_GET_AMXSTRING			g_fn_GetAmxString;
+extern PFN_GET_AMXSTRING_NULL		g_fn_GetAmxStringNull;
 extern PFN_GET_AMXSTRINGLEN			g_fn_GetAmxStringLen;
 extern PFN_FORMAT_AMXSTRING			g_fn_FormatAmxString;
 extern PFN_COPY_AMXMEMORY			g_fn_CopyAmxMemory;
@@ -2248,6 +2275,7 @@ extern PFN_AMX_EXEC					g_fn_AmxExec;
 extern PFN_AMX_ALLOT				g_fn_AmxAllot;
 extern PFN_AMX_FINDPUBLIC			g_fn_AmxFindPublic;
 extern PFN_LOAD_AMXSCRIPT			g_fn_LoadAmxScript;
+extern PFN_LOAD_AMXSCRIPT_EX		g_fn_LoadAmxScriptEx;
 extern PFN_UNLOAD_AMXSCRIPT			g_fn_UnloadAmxScript;
 extern PFN_REAL_TO_CELL				g_fn_RealToCell;
 extern PFN_CELL_TO_REAL				g_fn_CellToReal;
@@ -2275,79 +2303,85 @@ extern PFN_GETLOCALINFO				g_fn_GetLocalInfo;
 extern PFN_AMX_REREGISTER			g_fn_AmxReRegister;
 extern PFN_REGISTERFUNCTIONEX		g_fn_RegisterFunctionEx;
 extern PFN_MESSAGE_BLOCK			g_fn_MessageBlock;
+extern PFN_GET_CONFIG_MANAGER		g_fn_GetConfigManager;
 
 #ifdef MAY_NEVER_BE_DEFINED
 // Function prototypes for intellisense and similar systems
 // They understand #if 0 so we use #ifdef MAY_NEVER_BE_DEFINED
-int				MF_AddNatives(const AMX_NATIVE_INFO *list) {}
-int				MF_AddNewNatives(const AMX_NATIVE_INFO *list) {}
-char *			MF_BuildPathname(const char * format, ...) {}
-char *			MF_BuildPathnameR(char *buffer, size_t maxlen, const char *fmt, ...) {}
-cell *			MF_GetAmxAddr(AMX * amx, cell offset) {}
-void			MF_PrintSrvConsole(char * format, ...) {}
-const char *	MF_GetModname(void) {}
-const char *	MF_GetScriptName(int id) {}
-AMX *			MF_GetScriptAmx(int id) {}
-int				MF_FindScriptByAmx(const AMX * amx) {}
-int				MF_FindScriptByAmx(const char * name) {}
-int				MF_SetAmxString(AMX * amx, cell amx_addr, const char *  source, int  max) {}
-char *			MF_GetAmxString(AMX * amx, cell amx_addr, int bufferId, int * pLen) {}
-int				MF_GetAmxStringLen(const cell *ptr) {}
-char *			MF_FormatAmxString(AMX * amx, cell * params, int startParam, int * pLen) {}
-void			MF_CopyAmxMemory(cell * dest, const cell * src, int len) {}
-void			MF_Log(const char * fmt, ...) {}
-void			MF_LogError(AMX * amx, int err, const char *fmt, ...) {}
-int				MF_RaiseAmxError(AMX * amx, int error) {}
-int				MF_RegisterForward(const char * funcname, ForwardExecType exectype, ...) {}
-int				MF_ExecuteForward(int id, ...) {}
-cell			MF_PrepareCellArray(cell * ptr, unsigned int size) {}
-cell			MF_PrepareCharArray(char * ptr, unsigned int size) {}
-cell			MF_PrepareCellArrayA(cell * ptr, unsigned int size, bool copyBack) {}
-cell			MF_PrepareCharArrayA(char * ptr, unsigned int size, bool copyBack) {}
-int				MF_IsPlayerValid(int id) {}
-const char *	MF_GetPlayerName(int id) {}
-const char *	MF_GetPlayerIP(int id) {}
-int				MF_IsPlayerIngame(int id) {}
-int				MF_IsPlayerBot(int id) {}
-int				MF_IsPlayerAuthorized(int id) {}
-float			MF_GetPlayerTime(int id) {}
-float			MF_GetPlayerPlayTime(int id) {}
-int				MF_GetPlayerCurweapon(int id) {}
-const char *	MF_GetPlayerTeam(int id) {}
-int				MF_GetPlayerTeamID(int id) {}
-int				MF_GetPlayerDeaths(int id) {}
-int				MF_GetPlayerMenu(int id) {}
-int				MF_GetPlayerKeys(int id) {}
-int				MF_IsPlayerAlive(int id) {}
-int				MF_GetPlayerFrags(int id) {}
-int				MF_IsPlayerConnecting(int id) {}
-int				MF_IsPlayerHLTV(int id) {}
-int				MF_GetPlayerArmor(int id) {}
-int				MF_GetPlayerHealth(int id) {}
-REAL			amx_ctof(cell x) {}
-cell			amx_ftoc(float x) {}
-int				MF_RegisterSPForwardByName(AMX * amx, const char *str, ...) {}
-int				MF_RegisterSPForward(AMX * amx, int func, ...) {}
-void			MF_UnregisterSPForward(int id) {}
-int				MF_GetPlayerFlags(int id) {}
-edict_t*		MF_GetPlayerEdict(int id) {}
-const char *	MF_Format(const char *fmt, ...) {}
-void			MF_RegisterFunction(void *pfn, const char *description) {}
-void *			MF_RequestFunction(const char *description) {}
-int				MF_AmxPush(AMX *amx, cell *params) {}
-int				MF_AmxExec(AMX *amx, cell *retval, int idx) {}
-int				MF_SetPlayerTeamInfo(int id, int teamid, const char *teamname) {}
-void *			MF_PlayerPropAddr(int id, int prop) {}
-void			MF_RegAuthFunc(AUTHORIZEFUNC fn) {}
-void			MF_UnregAuthFunc(AUTHORIZEFUNC fn) {}
-int				MF_FindLibrary(const char *name, LibType type) {}
-size_t			MF_AddLibraries(const char *name, LibType type, void *parent) {}
-size_t			MF_RemoveLibraries(void *parent) {}
-void			MF_OverrideNatives(AMX_NATIVE_INFO *natives, const char *myname) {}
-const char *	MF_GetLocalInfo(const char *name, const char *def) {}
-int				MF_AmxReRegister(AMX *amx, AMX_NATIVE_INFO *list, int number) { return 0; }
-void *			MF_RegisterFunctionEx(void *pfn, const char *description) {}
-void *			MF_MessageBlock(int mode, int msg, int *opt) {}
+int				MF_AddNatives				(const AMX_NATIVE_INFO *list) { }
+int				MF_AddNewNatives			(const AMX_NATIVE_INFO *list) { }
+char *			MF_BuildPathname			(const char * format, ...) { }
+char *			MF_BuildPathnameR			(char *buffer, size_t maxlen, const char *fmt, ...) { }
+cell *			MF_GetAmxAddr				(AMX * amx, cell offset) { }
+cell *			MF_GetAmxVectorNull			(AMX * amx, cell offset) { }
+void			MF_PrintSrvConsole			(char * format, ...) { }
+const char *	MF_GetModname				(void) { }
+const char *	MF_GetScriptName			(int id) { }
+AMX *			MF_GetScriptAmx				(int id) { }
+int				MF_FindScriptByAmx			(const AMX * amx) { }
+int				MF_FindScriptByAmx			(const char * name) { }
+int				MF_SetAmxString				(AMX * amx, cell amx_addr, const char *  source , int  max ) { }
+int				MF_SetAmxStringUTF8Char		(AMX *amx, cell amx_addr, const char *source, size_t sourcelen, size_t maxlen) { }
+int				MF_SetAmxStringUTF8Cell		(AMX *amx, cell amx_addr, const cell *source, size_t sourcelen, size_t maxlen) { }
+char *			MF_GetAmxString				(AMX * amx, cell amx_addr, int bufferId, int * pLen) { }
+char *			MF_GetAmxStringNull			(AMX * amx, cell amx_addr, int bufferId, int * pLen) { }
+int				MF_GetAmxStringLen			(const cell *ptr) { }
+char *			MF_FormatAmxString			(AMX * amx, cell * params, int startParam, int * pLen) { }
+void			MF_CopyAmxMemory			(cell * dest, const cell * src, int len) { }
+void			MF_Log						(const char * fmt, ...) { }
+void			MF_LogError					(AMX * amx, int err, const char *fmt, ...) { }
+int				MF_RaiseAmxError			(AMX * amx, int error) { }
+int				MF_RegisterForward			(const char * funcname, ForwardExecType exectype, ...) { }
+int				MF_ExecuteForward			(int id, ...) { }
+cell			MF_PrepareCellArray			(cell * ptr, unsigned int size) { }
+cell			MF_PrepareCharArray			(char * ptr, unsigned int size) { }
+cell			MF_PrepareCellArrayA			(cell * ptr, unsigned int size, bool copyBack) { }
+cell			MF_PrepareCharArrayA			(char * ptr, unsigned int size, bool copyBack) { }
+int				MF_IsPlayerValid			(int id) { }
+const char *	MF_GetPlayerName			(int id) { }
+const char *	MF_GetPlayerIP				(int id) { }
+int				MF_IsPlayerIngame			(int id) { }
+int				MF_IsPlayerBot				(int id) { }
+int				MF_IsPlayerAuthorized		(int id) { }
+float			MF_GetPlayerTime			(int id) { }
+float			MF_GetPlayerPlayTime		(int id) { }
+int				MF_GetPlayerCurweapon		(int id) { }
+const char *	MF_GetPlayerTeam			(int id) { }
+int				MF_GetPlayerTeamID			(int id) { }
+int				MF_GetPlayerDeaths			(int id) { }
+int				MF_GetPlayerMenu			(int id) { }
+int				MF_GetPlayerKeys			(int id) { }
+int				MF_IsPlayerAlive			(int id) { }
+int				MF_GetPlayerFrags			(int id) { }
+int				MF_IsPlayerConnecting		(int id) { }
+int				MF_IsPlayerHLTV				(int id) { }
+int				MF_GetPlayerArmor			(int id) { }
+int				MF_GetPlayerHealth			(int id) { }
+REAL			amx_ctof					(cell x) { }
+cell			amx_ftoc					(float x) { }
+int				MF_RegisterSPForwardByName	(AMX * amx, const char *str, ...) { }
+int				MF_RegisterSPForward		(AMX * amx, int func, ...) { }
+void			MF_UnregisterSPForward		(int id) { }
+int				MF_GetPlayerFlags			(int id) { }
+edict_t*		MF_GetPlayerEdict			(int id) { }
+const char *	MF_Format					(const char *fmt, ...) { }
+void			MF_RegisterFunction			(void *pfn, const char *description) { }
+void *			MF_RequestFunction			(const char *description) { }
+int				MF_AmxPush					(AMX *amx, cell *params) { }
+int				MF_AmxExec					(AMX *amx, cell *retval, int idx) { }
+int				MF_SetPlayerTeamInfo		(int id, int teamid, const char *teamname) { }
+void *			MF_PlayerPropAddr			(int id, int prop) { }
+void			MF_RegAuthFunc				(AUTHORIZEFUNC fn) { }
+void			MF_UnregAuthFunc			(AUTHORIZEFUNC fn) { }
+int				MF_FindLibrary				(const char *name, LibType type) { }
+size_t			MF_AddLibraries				(const char *name, LibType type, void *parent) { }
+size_t			MF_RemoveLibraries			(void *parent) { }
+void			MF_OverrideNatives			(AMX_NATIVE_INFO *natives, const char *myname) { }
+const char *	MF_GetLocalInfo				(const char *name, const char *def) { }
+int				MF_AmxReRegister			(AMX *amx, AMX_NATIVE_INFO *list, int number) { return 0; }
+void *			MF_RegisterFunctionEx		(void *pfn, const char *description) { }
+void *			MF_MessageBlock				(int mode, int msg, int *opt) { }
+IGameConfigManager* MF_GetConfigManager     (void) { }
 #endif	// MAY_NEVER_BE_DEFINED
 
 #define MF_AddNatives g_fn_AddNatives
@@ -2356,6 +2390,7 @@ void *			MF_MessageBlock(int mode, int msg, int *opt) {}
 #define MF_BuildPathnameR g_fn_BuildPathnameR
 #define MF_FormatAmxString g_fn_FormatAmxString
 #define MF_GetAmxAddr g_fn_GetAmxAddr
+#define MF_GetAmxVectorNull g_fn_GetAmxVectorNull
 #define MF_PrintSrvConsole g_fn_PrintSrvConsole
 #define MF_GetModname g_fn_GetModname
 #define MF_GetScriptName g_fn_GetAmxScriptName
@@ -2363,7 +2398,10 @@ void *			MF_MessageBlock(int mode, int msg, int *opt) {}
 #define MF_FindScriptByAmx g_fn_FindAmxScriptByAmx
 #define MF_FindScriptByName g_fn_FindAmxScriptByName
 #define MF_SetAmxString g_fn_SetAmxString
+#define MF_SetAmxStringUTF8Char g_fn_SetAmxStringUTF8Char
+#define MF_SetAmxStringUTF8Cell g_fn_SetAmxStringUTF8Cell
 #define MF_GetAmxString g_fn_GetAmxString
+#define MF_GetAmxStringNull g_fn_GetAmxStringNull
 #define MF_GetAmxStringLen g_fn_GetAmxStringLen
 #define MF_CopyAmxMemory g_fn_CopyAmxMemory
 void MF_Log(const char *fmt, ...);
@@ -2401,6 +2439,7 @@ void MF_LogError(AMX *amx, int err, const char *fmt, ...);
 #define MF_AmxAllot g_fn_AmxAllot
 #define MF_AmxFindNative g_fn_AmxFindNative
 #define MF_LoadAmxScript g_fn_LoadAmxScript
+#define MF_LoadAmxScriptEx g_fn_LoadAmxScriptEx
 #define MF_UnloadAmxScript g_fn_UnloadAmxScript
 #define MF_MergeDefinitionFile g_fn_MergeDefinition_File
 #define amx_ctof g_fn_CellToReal
@@ -2426,6 +2465,7 @@ void MF_LogError(AMX *amx, int err, const char *fmt, ...);
 #define MF_AmxReRegister g_fn_AmxReRegister
 #define MF_RegisterFunctionEx g_fn_RegisterFunctionEx
 #define MF_MessageBlock g_fn_MessageBlock
+#define MF_GetConfigManager g_fn_GetConfigManager
 
 #ifdef MEMORY_TEST
 /*** Memory ***/
@@ -2451,11 +2491,11 @@ extern	const	unsigned int	m_alloc_free;
 void	Mem_SetOwner(const char *filename, int line, const char *function);
 // Actual allocator
 void *	Mem_Allocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-	const unsigned int allocationType, const size_t reportedSize);
+					const unsigned int allocationType, const size_t reportedSize);
 void *	Mem_Reallocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-	const unsigned int reallocationType, const size_t reportedSize, void *reportedAddress);
+					const unsigned int reallocationType, const size_t reportedSize, void *reportedAddress);
 void	Mem_Deallocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-	const unsigned int deallocationType, void *reportedAddress);
+					const unsigned int deallocationType, void *reportedAddress);
 
 // memory macros
 #ifndef __FUNCTION__
@@ -2472,5 +2512,7 @@ void	Mem_Deallocator(const char *sourceFile, const unsigned int sourceLine, cons
 #define	free(ptr)	Mem_Deallocator(__FILE__,__LINE__,__FUNCTION__,m_alloc_free,ptr)
 
 #endif //MEMORY_TEST
+
+template <typename D, typename S> unsigned int strncopy(D *dest, const S *src, size_t count);
 
 #endif // #ifndef __AMXXMODULE_H__

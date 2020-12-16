@@ -1,6 +1,6 @@
 #include "module.h"
 
-StringHashMap<ke::AutoPtr<IEntDataEntry>> *g_entityData = nullptr;
+StringHashMap<std::unique_ptr<IEntDataEntry>> *g_entityData = nullptr;
 
 void OnAmxxAttach()
 {
@@ -9,7 +9,7 @@ void OnAmxxAttach()
 
 void OnPluginsLoaded()
 {
-    g_entityData = new StringHashMap<ke::AutoPtr<IEntDataEntry>>[gpGlobals->maxEntities];
+    g_entityData = new StringHashMap<std::unique_ptr<IEntDataEntry>>[gpGlobals->maxEntities];
 }
 
 void OnPluginsUnloaded()
@@ -18,8 +18,6 @@ void OnPluginsUnloaded()
     {
         g_entityData[i].clear();
     }
-
-    delete g_entityData;
 }
 
 void OnFreeEntPrivateData_Post(edict_t *ed)
