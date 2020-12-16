@@ -72,8 +72,7 @@ if cxx.like('gcc'):
     '-Wno-unused-value',
     '-fno-strict-aliasing',
     '-fPIC',
-    '-m32',
-    '-fpermissive'
+    '-m32'
   ]
 
   cxx.cxxflags += [
@@ -158,3 +157,4 @@ binary.sources += [
 #
 
 builder.Add(binary)
+
