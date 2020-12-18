@@ -25,4 +25,6 @@ void OnFreeEntPrivateData_Post(edict_t *ed)
     // TODO: Let plugins somehow release handles bound to this entity
 
     g_entityData[g_engfuncs.pfnIndexOfEdict(ed)].clear();
+
+    RETURN_META(MRES_IGNORED);
 }
