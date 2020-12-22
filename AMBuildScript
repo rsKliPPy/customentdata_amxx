@@ -100,7 +100,7 @@ elif cxx.like('msvc'):
   cxx.linkflags += [
     '/MACHINE:X86',
     '/SUBSYSTEM:WINDOWS',
-
+    '/EXPORT:GiveFnptrsToDll=_GiveFnptrsToDll@8,@1',
     'kernel32.lib'
   ]
 
