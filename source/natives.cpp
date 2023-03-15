@@ -17,7 +17,7 @@ static cell Native_SetCell(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    g_entityData[index].replace(key, ke::AutoPtr<IEntDataEntry>(new EntDataCell(params[3])));
+    g_entityData[index].replace(key, std::unique_ptr<IEntDataEntry>(new EntDataCell(params[3])));
 
     return 0;
 }
@@ -27,10 +27,10 @@ static cell Native_SetArray(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
     
-    ke::AutoPtr<cell[]> data(new cell[params[4]]);
+    std::unique_ptr<cell[]> data(new cell[params[4]]);
     MF_CopyAmxMemory(data.get(), MF_GetAmxAddr(amx, params[3]), params[4]);
 
-    g_entityData[index].replace(key, ke::AutoPtr<IEntDataEntry>(new EntDataArray(ke::Move(data), params[4])));
+    g_entityData[index].replace(key, std::unique_ptr<IEntDataEntry>(new EntDataArray(std::move(data), params[4])));
 
     return 0;
 }
@@ -40,7 +40,7 @@ static cell Native_SetString(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    g_entityData[index].replace(key, ke::AutoPtr<IEntDataEntry>(new EntDataString(MF_GetAmxString(amx, params[3], 2, &dummyLen))));
+    g_entityData[index].replace(key, std::unique_ptr<IEntDataEntry>(new EntDataString(MF_GetAmxString(amx, params[3], 2, &dummyLen))));
 
     return 0;
 }
@@ -50,7 +50,7 @@ static cell Native_GetCell(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    ke::AutoPtr<IEntDataEntry> *ptrData;
+    std::unique_ptr<IEntDataEntry> *ptrData;
     if(g_entityData[index].retrieve(key, &ptrData))
     {
         EntDataCell *data = static_cast<EntDataCell *>(ptrData->get());
@@ -69,7 +69,7 @@ static cell Native_GetArray(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    ke::AutoPtr<IEntDataEntry> *ptrData;
+    std::unique_ptr<IEntDataEntry> *ptrData;
     if(g_entityData[index].retrieve(key, &ptrData))
     {
         EntDataArray *data = static_cast<EntDataArray *>(ptrData->get());
@@ -93,14 +93,14 @@ static cell Native_GetString(AMX *amx, cell *params)
 {
     NATIVE_SETUP();
 
-    ke::AutoPtr<IEntDataEntry> *ptrData;
+    std::unique_ptr<IEntDataEntry> *ptrData;
     if(g_entityData[index].retrieve(key, &ptrData))
     {
         EntDataString *data = static_cast<EntDataString *>(ptrData->get());
         if(data->GetEntryType() != IEntDataEntry::EntryType::String)
             return 0;
 
-        MF_SetAmxString(amx, params[3], data->Data.chars(), params[4]);
+        MF_SetAmxString(amx, params[3], data->Data.c_str(), params[4]);
         return 1;
     }
     

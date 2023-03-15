@@ -3,7 +3,7 @@
 
 #include "amxxsdk/amxxmodule.h"
 #include <amtl/am-string.h>
-#include <amtl/am-autoptr.h>
+//#include <amtl/am-autoptr.h>
 
 class IEntDataEntry
 {
@@ -46,12 +46,12 @@ public:
         return EntryType::Array;
     }
 
-    EntDataArray(ke::AutoPtr<cell[]> &&data, size_t size) : Data(ke::Move(data)), DataSize(size)
+    EntDataArray(std::unique_ptr<cell[]> &&data, size_t size) : Data(std::move(data)), DataSize(size)
     {
     }
 
 public:
-    ke::AutoPtr<cell[]> Data;
+    std::unique_ptr<cell[]> Data;
     size_t DataSize;
 };
 
@@ -68,7 +68,7 @@ public:
     }
 
 public:
-    ke::AString Data;
+    std::string Data;
 };
 
 #endif // CENTDATAENTRY_H

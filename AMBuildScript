@@ -76,7 +76,7 @@ if cxx.like('gcc'):
   ]
 
   cxx.cxxflags += [
-    '-std=c++11',
+    '-std=gnu++14',
     '-fno-exceptions',
     '-fno-rtti'
   ]
@@ -100,7 +100,7 @@ elif cxx.like('msvc'):
   cxx.linkflags += [
     '/MACHINE:X86',
     '/SUBSYSTEM:WINDOWS',
-
+    '/EXPORT:GiveFnptrsToDll=_GiveFnptrsToDll@8,@1',
     'kernel32.lib'
   ]
 
@@ -157,3 +157,4 @@ binary.sources += [
 #
 
 builder.Add(binary)
+
